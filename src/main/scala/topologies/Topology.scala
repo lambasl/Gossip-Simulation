@@ -38,10 +38,10 @@ class Topology() extends Actor {
 					identity(2) = z
 
 					if (gossipOrPushsum == "gossip") {
-						networkNodes(x,y,z) =  networkSystem.actorOf(Props(new GossipActor(this,identity)), name = x.toString + y.toString + z.toString)
+						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(this,identity)), name = x.toString + y.toString + z.toString)
 					}
 					else {
-						networkNodes(x,y,z) = networkSystem.actorOf(Props(new PushSumActor(this,identity)), name = x.toString + y.toString + z.toString)
+						networkNodes(x)(y)(z) = networkSystem.actorOf(Props(new PushSumActor(this,identity)), name = x.toString + y.toString + z.toString)
 					}
 				}
 			}
@@ -80,7 +80,7 @@ class Topology() extends Actor {
 		}
 
 		else if (topology == "grid") {
-			
+
 		}
 
 		else if (topology == "imperfectgrid") {
