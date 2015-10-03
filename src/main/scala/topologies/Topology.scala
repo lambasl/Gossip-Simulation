@@ -5,12 +5,14 @@ import akka.actor._
 import scala.math
 
 /**
- * @author user
+ * @SrinivasNarne @SatbeerLamba
  */
+
+case class Rumour(topology: Int, numberOfNodes: Int, gossipOrPushsum: String) extends Messages
 class Topology() extends Actor {
 
 	val rand = new Random()
-	def networkGenerator(numberOfNodes: Int, topology: String, gossipOrPushsum: String) = {
+	def networkGenerator(numberOfNodes: Int, topology: String, gossipOrPushsum: String): Array [ActorRef] = {
 		var xDimension = 1
 		var yDimension = 1
 		var zDimension = 1
@@ -46,7 +48,7 @@ class Topology() extends Actor {
 				}
 			}
 		}
-
+		return networkNodes
 	}
 
 	def randomNeighborSelector (topology: String, identity: Array[Int], numberOfNodes: Int): Array[Int] = {
@@ -123,7 +125,11 @@ class Topology() extends Actor {
 
 	def receive = {
 
-		case Rumour(topology: Int, numberOfNodes: Int)
+		case Rumour(topology: Int, numberOfNodes: Int, gossipOrPushsum: String) => {
+			val network = networkGenerator(numberOfNodes, topology, gossipOrPushsum)
+			network(1)(0)(0) ! "gossip"
+
+		}
 	}
 
 }
