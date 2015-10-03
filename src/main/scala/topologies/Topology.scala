@@ -38,10 +38,10 @@ class Topology() extends Actor {
 					identity(2) = z
 
 					if (gossipOrPushsum == "gossip") {
-						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(this,identity)), name = x.toString + y.toString + z.toString)
+						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(this,identity)), name = x.toString + "," + y.toString + "," + z.toString)
 					}
 					else {
-						networkNodes(x)(y)(z) = networkSystem.actorOf(Props(new PushSumActor(this,identity)), name = x.toString + y.toString + z.toString)
+						networkNodes(x)(y)(z) = networkSystem.actorOf(Props(new PushSumActor(this,identity)), name = x.toString + "," + y.toString + "," + z.toString)
 					}
 				}
 			}
@@ -50,6 +50,18 @@ class Topology() extends Actor {
 	}
 
 	def randomNeighborSelector (topology: String, identity: Array[Int], numberOfNodes: Int): Array[Int] = {
+		var gridDimension = math.round(math.cbrt(numberOfNodes))
+		def randomDimension(i: Int): Int = {
+			var coordinate = rand.nextInt(2)
+			var y = identity(i)
+			if (coordinate == 0) {
+				y--
+			}
+			else {
+				y++
+			}
+			return y
+		}
 
 		if (topology == "fullnetwork") {
 			var x = rand.nextInt(numberOfNodes)
@@ -70,7 +82,7 @@ class Topology() extends Actor {
 				identity(0) == identity(0) - 1
 			}
 			else {
-				var x= rand.nextInt(2)
+				var x = rand.nextInt(2)
 				if (x == 0) {
 					identity(0) = identity(0) - 1
 				}
@@ -80,11 +92,32 @@ class Topology() extends Actor {
 		}
 
 		else if (topology == "grid") {
-
+			var randomOption = rand.nextInt(3)
+			var x = randomDimension(randomOption)
+			while ((x < 0) || (x > gridDimension)) {
+				x = randomDimension(randomOption)
+			}
+			identity(randomOption) = x
+			return identity
 		}
 
 		else if (topology == "imperfectgrid") {
-
+			var randomOption = rand.nextInt(4)
+			if (randomOption < 3) {
+				var x = randomDimension(randomOption)
+				while ((x < 0) || (x > gridDimension)) {
+					x = randomDimension(randomOption)
+				}
+				identity(randomOption) = x
+			}
+			else {
+				var x = rand.nextInt(gridDimension)
+				for (i = 0; i < 3; i++) {
+					x = rand.nextInt(gridDimension)
+					identity(i) = x
+				}
+			return identity
+			}
 		}
 	}
 
