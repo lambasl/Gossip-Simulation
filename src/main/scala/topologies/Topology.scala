@@ -15,7 +15,7 @@ object Topology {
 	var network: Array[Array[Array[ActorRef]]] =  null
   var N : Int = 0
   var topologyType: String = ""
-  
+
   def initialiseTopology(numberOfNodes: Int, topology: String, gossipOrPushsum: String) = {
    N = numberOfNodes
    topologyType = topology
@@ -60,7 +60,7 @@ object Topology {
 		}
 		return networkNodes
 	}
-  
+
   def printIdentity (identity: Array[Int]): Unit = {
     print("Identity:x=" + identity(0) + ",y=" + identity(1) + ",z=" + identity(2))
   }
@@ -115,7 +115,7 @@ object Topology {
 		else if (topologyType == "grid") {
 			var randomOption = rand.nextInt(3)
 			var x = randomDimension(randomOption)
-			while ((x < 0) || (x > gridDimension)) {
+			while ((x < 0) || (x >= gridDimension)) {
 				x = randomDimension(randomOption)
 			}
 			identity(randomOption) = x
@@ -126,7 +126,7 @@ object Topology {
 			var randomOption: Int = rand.nextInt(4)
 			if (randomOption < 3) {
 				var x: Int = (randomDimension(randomOption)).toInt
-				while ((x < 0) || (x > gridDimension)) {
+				while ((x < 0) || (x >= gridDimension)) {
 					x = (randomDimension(randomOption)).toInt
 				}
 				identity(randomOption) = x
