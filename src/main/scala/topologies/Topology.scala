@@ -3,22 +3,22 @@ package topologies
 import actors.BaseActor
 import akka.actor._
 import scala.math
+import scala.util.Random
 
 /**
  * @SrinivasNarne @SatbeerLamba
  */
 
-case class Rumour(topology: Int, numberOfNodes: Int, gossipOrPushsum: String) extends Messages
-class Topology() extends Actor {
-
+object Topology {
+	val network = null
 	val rand = new Random()
 	def networkGenerator(numberOfNodes: Int, topology: String, gossipOrPushsum: String): Array [ActorRef] = {
 		var xDimension = 1
 		var yDimension = 1
 		var zDimension = 1
 
-		if (topology = "grid" || "imperfectgrid") {
-			xDimension = math.round(math.cbrt(numberOfNodes))
+		if (topology == "grid" || topology == "imperfectgrid") {
+			xDimension = (math.round(math.cbrt(numberOfNodes))).toInt
 			yDimension = xDimension
 			zDimension = xDimension
 		}
@@ -40,7 +40,7 @@ class Topology() extends Actor {
 					identity(2) = z
 
 					if (gossipOrPushsum == "gossip") {
-						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(this,identity)), name = x.toString + "," + y.toString + "," + z.toString)
+						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(topology, identity, numberOfNodes)), name = x.toString + "," + y.toString + "," + z.toString)
 					}
 					else {
 						networkNodes(x)(y)(z) = networkSystem.actorOf(Props(new PushSumActor(this,identity)), name = x.toString + "," + y.toString + "," + z.toString)
@@ -48,19 +48,23 @@ class Topology() extends Actor {
 				}
 			}
 		}
+		network = networkNodes
 		return networkNodes
 	}
+	def randomNeighbor (numberOfNodes: Int, topology: String, gossipOrPushsum: String): ActorRef = {
+		return network(neighbor(0))(neighbor(1))(neighbor(2))
 
+	}
 	def randomNeighborSelector (topology: String, identity: Array[Int], numberOfNodes: Int): Array[Int] = {
-		var gridDimension = math.round(math.cbrt(numberOfNodes))
+		var gridDimension = (math.round(math.cbrt(numberOfNodes))).toInt
 		def randomDimension(i: Int): Int = {
 			var coordinate = rand.nextInt(2)
-			var y = identity(i)
+			var y: Int = identity(i)
 			if (coordinate == 0) {
-				y--
+				y = y-1
 			}
 			else {
-				y++
+				y = y+1
 			}
 			return y
 		}
@@ -104,17 +108,17 @@ class Topology() extends Actor {
 		}
 
 		else if (topology == "imperfectgrid") {
-			var randomOption = rand.nextInt(4)
+			var randomOption: Int = rand.nextInt(4)
 			if (randomOption < 3) {
-				var x = randomDimension(randomOption)
+				var x: Int = (randomDimension(randomOption)).toInt
 				while ((x < 0) || (x > gridDimension)) {
-					x = randomDimension(randomOption)
+					x = (randomDimension(randomOption)).toInt
 				}
 				identity(randomOption) = x
 			}
 			else {
 				var x = rand.nextInt(gridDimension)
-				for (i = 0; i < 3; i++) {
+				for (i <- 0 to 2) {
 					x = rand.nextInt(gridDimension)
 					identity(i) = x
 				}
@@ -123,13 +127,5 @@ class Topology() extends Actor {
 		}
 	}
 
-	def receive = {
-
-		case Rumour(topology: Int, numberOfNodes: Int, gossipOrPushsum: String) => {
-			val network = networkGenerator(numberOfNodes, topology, gossipOrPushsum)
-			network(1)(0)(0) ! "gossip"
-
-		}
-	}
 
 }
