@@ -61,8 +61,8 @@ object Topology {
 		return networkNodes
 	}
 
-  def printIdentity (identity: Array[Int]): Unit = {
-    print("Identity:x=" + identity(0) + ",y=" + identity(1) + ",z=" + identity(2))
+  def identityString (identity: Array[Int]): String = {
+    return "Identity:x=" + identity(0) + ",y=" + identity(1) + ",z=" + identity(2)
   }
 	def randomNeighbor (identity: Array[Int]): ActorRef = {
 		val neighbor = randomNeighborSelector(identity)
@@ -142,7 +142,7 @@ object Topology {
 			}
 		}
     if(returnVal == null){
-      println("WARNING!!!!!! : neightnour's identity is null")
+      println("WARNING!!!!!! : neighbour's identity is null")
     }else{
       //print("found neighbor = ")
       //printIdentity(returnVal)
