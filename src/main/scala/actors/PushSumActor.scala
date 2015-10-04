@@ -8,8 +8,8 @@ import common.Messages
  */
 class PushSumActor(val identity: Array[Int]) extends BaseActor{
   
-  var s: Double = 1.0 + identity(0) + identity(1)*10 + identity(2)*100
-  var w: Double = 1.0
+  var s: Double = 0
+  var w: Double = 0
   var r0 : Double = 0
   var r1 : Double = 0
   var r2 : Double = 0
@@ -25,22 +25,24 @@ class PushSumActor(val identity: Array[Int]) extends BaseActor{
     case Messages.push(s1: Double, w1: Double) =>{
       convergernceCount += 1;
       var news = s + s1
-      var neww = s + w
-      var newr = ratio(news, neww)
-      r4 = ratio(news, newr)
-      r1 = r0
+      var neww = w + w1
+      r0 = r1
       r1 = r2
       r2 = r3
       r3 = r4
-      s = s/2
-      w = w/2
+      r4 = ratio(news, neww)
+      s = news/2
+      w = neww/2
       convergernceCount += 1
-      if(convergernceCount > 5 && (r4 - r0) < Math.pow(10, -10)){
-        println("Actor" + Topology.identityString(identity) + ":" + r4 + "," + r3 + "," + r2 + "," + r1)       
-        context.stop(self)
+      if((r4 - r0) < Math.pow(10, -10)){
+        println("Actor" + Topology.identityString(identity) + ":" + r4 + ", count:" + convergernceCount + ", Final value:s=" + s*2 + ",w=" + w*2 + ", avg=" + ratio(s*2, w*2))
+        println("end time:" + System.currentTimeMillis())
+
+        context.system.shutdown()
       }
       else{
-        Topology.randomNeighbor(identity) ! Messages.push(s/2, w/2)
+        Topology.randomNeighbor(identity) ! Messages.push(news/2, neww/2)
+
       }
     }
        

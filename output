@@ -1,0 +1,24 @@
+sbt "run 1000000 grid  pushsum"
+ActorIdentity:x=4,y=27,z=28:5.0462745093682315E-11, count:94
+ActorIdentity:x=15,y=33,z=3:5.616129783447832E-11, count:90
+ActorIdentity:x=21,y=37,z=4:6.156142262625508E-11, count:90
+ActorIdentity:x=59,y=2,z=1:8.776623872108757E-11, count:86
+ActorIdentity:x=26,y=21,z=20:7.80460140958894E-11, count:92
+ActorIdentity:x=1,y=3,z=35:5.0320636546530295E-11, count:94
+ActorIdentity:x=23,y=4,z=24:8.054712452576496E-11, count:92
+ActorIdentity:x=19,y=38,z=1:6.554046194651164E-11, count:90
+ActorIdentity:x=19,y=32,z=21:5.7070792536251253E-11, count:92
+ActorIdentity:x=11,y=35,z=2:7.23048287909478E-11, count:88
+ActorIdentity:x=38,y=19,z=4:9.026734915096313E-11, count:88
+ActorIdentity:x=43,y=11,z=16:7.963762982399203E-11, count:90
+ActorIdentity:x=12,y=34,z=5:9.231371222995222E-11, count:86
+ActorIdentity:x=22,y=39,z=27:8.199663170671556E-11, count:92
+ActorIdentity:x=25,y=40,z=14:9.566747394273989E-11, count:90
+ActorIdentity:x=35,y=39,z=9:5.88329385209363E-11, count:90
+ActorIdentity:x=49,y=19,z=8:6.730260793119669E-11, count:90
+ActorIdentity:x=5,y=13,z=26:9.521272659185342E-11, count:92
+ActorIdentity:x=27,y=28,z=10:6.17319528828375E-11, count:92
+ActorIdentity:x=36,y=16,z=49:8.967049325292466E-11, count:92
+ActorIdentity:x=12,y=9,z=59:7.582912076031789E-11, count:94
+ActorIdentity:x=25,y=2,z=37:5.822187176818261E-11, count:94
+ActorIdentity:x=15,y=6,z=47:5.552180937229423E-11, count:94

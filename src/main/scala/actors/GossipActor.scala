@@ -21,13 +21,11 @@ class GossipActor(val identity: Array[Int]) extends BaseActor {
       
       var randomNeighbor = Topology.randomNeighbor(identity)
       randomNeighbor ! "gossip"
-      Topology.randomNeighbor(identity) ! "gossip"
-      //Topology.randomNeighbor(identity) ! "gossip"
       }
       else{
         println("Final Count for actor: " + Topology.identityString(identity)  + " is:"+ gossipsCount)
-        context.stop(self)
-        //context.system.shutdown()
+        println("end time:" + System.currentTimeMillis())
+        context.system.shutdown()
       }
     }
 
