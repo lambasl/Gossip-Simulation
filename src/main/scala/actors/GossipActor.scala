@@ -16,14 +16,18 @@ class GossipActor(val identity: Array[Int]) extends BaseActor {
     }
 
     case "gossip" => {
-      //sprintln("recieved message in Actor:" + id)
-      if(gossipsCount < 10){
       gossipsCount += 1;
+      if(gossipsCount < 10){
+      
       var randomNeighbor = Topology.randomNeighbor(identity)
       randomNeighbor ! "gossip"
+      //Topology.randomNeighbor(identity) ! "gossip"
+      //Topology.randomNeighbor(identity) ! "gossip"
       }
       else{
-        println("Final Count: "+ gossipsCount + "ID: " + identity(0))
+        println("Final Count for actor: " + Topology.printIdentity(identity)  + " is:"+ gossipsCount)
+        context.stop(self)
+        //context.system.shutdown()
       }
     }
 

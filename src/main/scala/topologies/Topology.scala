@@ -18,8 +18,9 @@ object Topology {
   
   def initialiseTopology(numberOfNodes: Int, topology: String, gossipOrPushsum: String) = {
    N = numberOfNodes
-   topologyType = gossipOrPushsum
+   topologyType = topology
    network = networkGenerator(numberOfNodes, topology, gossipOrPushsum)
+   println("length of network" + network.length)
   }
 	val rand = new Random()
 	def networkGenerator(numberOfNodes: Int, topology: String, gossipOrPushsum: String): Array[Array[Array[ActorRef]]] = {
@@ -48,7 +49,6 @@ object Topology {
 					identity(0) = x
 					identity(1) = y
 					identity(2) = z
-
 					if (gossipOrPushsum == "gossip") {
 						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(identity)), name = x.toString + "," + y.toString + "," + z.toString)
 					}
@@ -60,6 +60,10 @@ object Topology {
 		}
 		return networkNodes
 	}
+  
+  def printIdentity (identity: Array[Int]): Unit = {
+    print("Identity:x=" + identity(0) + ",y=" + identity(1) + ",z=" + identity(2))
+  }
 	def randomNeighbor (identity: Array[Int]): ActorRef = {
 		val neighbor = randomNeighborSelector(identity)
     return network(neighbor(0))(neighbor(1))(neighbor(2))
@@ -67,6 +71,7 @@ object Topology {
 	}
 	def randomNeighborSelector (identity: Array[Int]): Array[Int] = {
 		var gridDimension = (math.round(math.cbrt(N))).toInt
+    var returnVal : Array[Int]= null
 		def randomDimension(i: Int): Int = {
 			var coordinate = rand.nextInt(2)
 			var y: Int = identity(i)
@@ -87,7 +92,7 @@ object Topology {
 			identity(0) = x
 			identity(1) = 0
 			identity(2) = 0
-			return identity
+			returnVal =  identity
 		}
 
 		else if (topologyType == "line") {
@@ -104,7 +109,7 @@ object Topology {
 				}
 				else identity(0) = identity(0) + 1
 			}
-			return identity
+			returnVal = identity
 		}
 
 		else if (topologyType == "grid") {
@@ -114,7 +119,7 @@ object Topology {
 				x = randomDimension(randomOption)
 			}
 			identity(randomOption) = x
-			return identity
+			returnVal =  identity
 		}
 
 		else if(topologyType == "imperfectgrid") {
@@ -125,7 +130,7 @@ object Topology {
 					x = (randomDimension(randomOption)).toInt
 				}
 				identity(randomOption) = x
-        return identity
+        returnVal =  identity
 			}
 			else {
 				var x = rand.nextInt(gridDimension)
@@ -133,10 +138,16 @@ object Topology {
 					x = rand.nextInt(gridDimension)
 					identity(i) = x
 				}
-			return identity
+			returnVal = identity
 			}
 		}
-    return null
+    if(returnVal == null){
+      println("WARNING!!!!!! : neightnour's identity is null")
+    }else{
+      //print("found neighbor = ")
+      //printIdentity(returnVal)
+    }
+    return returnVal
 	}
 
 
