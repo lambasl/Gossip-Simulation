@@ -62,7 +62,7 @@ object Topology {
 	}
 	def randomNeighbor (identity: Array[Int]): ActorRef = {
 		val neighbor = randomNeighborSelector(identity)
-    return network[neighbor(0)][neighbor(1)][neighbor(2)]
+    return network(neighbor(0))(neighbor(1))(neighbor(2))
 
 	}
 	def randomNeighborSelector (identity: Array[Int]): Array[Int] = {
