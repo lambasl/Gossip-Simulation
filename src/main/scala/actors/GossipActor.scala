@@ -5,7 +5,7 @@ import topologies.Topology
 /**
  * @author user
  */
-class GossipActor(val topology: String,val identity: Array[Int], numberOfNodes: Int) extends BaseActor {
+class GossipActor(val identity: Array[Int]) extends BaseActor {
 
   var gossipsCount = 0;
 
@@ -19,7 +19,7 @@ class GossipActor(val topology: String,val identity: Array[Int], numberOfNodes: 
       //sprintln("recieved message in Actor:" + id)
       if(gossipsCount < 10){
       gossipsCount += 1;
-      var randomNeighbor = Topology.randomNeighbor(, identity, numberOfNodes)
+      var randomNeighbor = Topology.randomNeighbor(identity)
       randomNeighbor ! "gossip"
       }
       else{

@@ -4,15 +4,25 @@ import actors.BaseActor
 import akka.actor._
 import scala.math
 import scala.util.Random
+import actors.GossipActor
+import actors.PushSumActor
 
 /**
  * @SrinivasNarne @SatbeerLamba
  */
 
 object Topology {
-	val network = null
+	var network: Array[Array[Array[ActorRef]]] =  null
+  var N : Int = 0
+  var topologyType: String = ""
+  
+  def initialiseTopology(numberOfNodes: Int, topology: String, gossipOrPushsum: String) = {
+   N = numberOfNodes
+   topologyType = gossipOrPushsum
+   network = networkGenerator(numberOfNodes, topology, gossipOrPushsum)
+  }
 	val rand = new Random()
-	def networkGenerator(numberOfNodes: Int, topology: String, gossipOrPushsum: String): Array [ActorRef] = {
+	def networkGenerator(numberOfNodes: Int, topology: String, gossipOrPushsum: String): Array[Array[Array[ActorRef]]] = {
 		var xDimension = 1
 		var yDimension = 1
 		var zDimension = 1
@@ -26,7 +36,7 @@ object Topology {
 			xDimension = numberOfNodes
 		}
 
-		val networkNodes = new Array.ofDim[ActorRef](xDimension.toInt, yDimension.toInt, zDimension.toInt)
+		val networkNodes =  Array.ofDim[ActorRef](xDimension.toInt, yDimension.toInt, zDimension.toInt)
 		val networkSystem = ActorSystem("networkSystem")
 
 		for (x <- 0 to xDimension - 1) {
@@ -40,23 +50,23 @@ object Topology {
 					identity(2) = z
 
 					if (gossipOrPushsum == "gossip") {
-						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(topology, identity, numberOfNodes)), name = x.toString + "," + y.toString + "," + z.toString)
+						networkNodes(x)(y)(z) =  networkSystem.actorOf(Props(new GossipActor(identity)), name = x.toString + "," + y.toString + "," + z.toString)
 					}
 					else {
-						networkNodes(x)(y)(z) = networkSystem.actorOf(Props(new PushSumActor(this,identity)), name = x.toString + "," + y.toString + "," + z.toString)
+						networkNodes(x)(y)(z) = networkSystem.actorOf(Props(new PushSumActor(identity)), name = x.toString + "," + y.toString + "," + z.toString)
 					}
 				}
 			}
 		}
-		network = networkNodes
 		return networkNodes
 	}
-	def randomNeighbor (numberOfNodes: Int, topology: String, gossipOrPushsum: String): ActorRef = {
-		return network(neighbor(0))(neighbor(1))(neighbor(2))
+	def randomNeighbor (identity: Array[Int]): ActorRef = {
+		val neighbor = randomNeighborSelector(identity)
+    return network[neighbor(0)][neighbor(1)][neighbor(2)]
 
 	}
-	def randomNeighborSelector (topology: String, identity: Array[Int], numberOfNodes: Int): Array[Int] = {
-		var gridDimension = (math.round(math.cbrt(numberOfNodes))).toInt
+	def randomNeighborSelector (identity: Array[Int]): Array[Int] = {
+		var gridDimension = (math.round(math.cbrt(N))).toInt
 		def randomDimension(i: Int): Int = {
 			var coordinate = rand.nextInt(2)
 			var y: Int = identity(i)
@@ -69,10 +79,10 @@ object Topology {
 			return y
 		}
 
-		if (topology == "fullnetwork") {
-			var x = rand.nextInt(numberOfNodes)
+		if (topologyType == "fullnetwork") {
+			var x = rand.nextInt(N)
 			while (x == identity(0)) {
-				 x = rand.nextInt(numberOfNodes)
+				 x = rand.nextInt(N)
 			}
 			identity(0) = x
 			identity(1) = 0
@@ -80,11 +90,11 @@ object Topology {
 			return identity
 		}
 
-		else if (topology == "line") {
+		else if (topologyType == "line") {
 			if (identity(0) == 0) {
 				identity(0) = 1
 			}
-			else if (identity(0) == numberOfNodes - 1) {
+			else if (identity(0) == N - 1) {
 				identity(0) == identity(0) - 1
 			}
 			else {
@@ -97,7 +107,7 @@ object Topology {
 			return identity
 		}
 
-		else if (topology == "grid") {
+		else if (topologyType == "grid") {
 			var randomOption = rand.nextInt(3)
 			var x = randomDimension(randomOption)
 			while ((x < 0) || (x > gridDimension)) {
@@ -107,7 +117,7 @@ object Topology {
 			return identity
 		}
 
-		else if (topology == "imperfectgrid") {
+		else if(topologyType == "imperfectgrid") {
 			var randomOption: Int = rand.nextInt(4)
 			if (randomOption < 3) {
 				var x: Int = (randomDimension(randomOption)).toInt
@@ -115,6 +125,7 @@ object Topology {
 					x = (randomDimension(randomOption)).toInt
 				}
 				identity(randomOption) = x
+        return identity
 			}
 			else {
 				var x = rand.nextInt(gridDimension)
@@ -125,6 +136,7 @@ object Topology {
 			return identity
 			}
 		}
+    return null
 	}
 
 

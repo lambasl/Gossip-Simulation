@@ -3,7 +3,7 @@ package actors
 /**
  * @author user
  */
-class PushSumActor extends BaseActor{
+class PushSumActor(val identity: Array[Int]) extends BaseActor{
   
   def receive = {
     case "Hello" =>{
