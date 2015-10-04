@@ -5,30 +5,31 @@ import topologies.Topology
 /**
  * @author user
  */
-class GossipActor(val topology: Topology,val id: Int) extends BaseActor {
-  
-  var gossipsCount = 0;  
-  
-  def getID(): Int ={
-    return id
-  }
+class GossipActor(val topology: String,val identity: Array[Int], numberOfNodes: Int) extends BaseActor {
+
+  var gossipsCount = 0;
+
+
   def receive = {
     case "Hello" => {
-      println("GossipActor")  
+      println("GossipActor")
     }
-    
+
     case "gossip" => {
-      println("recieved message in Actor:" + id)
+      //sprintln("recieved message in Actor:" + id)
       if(gossipsCount < 10){
       gossipsCount += 1;
-      //var randomNeighbor = topology.getRandonNeighbor(this)
-      //randomNeighbor ! "gossip"
+      var randomNeighbor = Topology.randomNeighbor(, identity, numberOfNodes)
+      randomNeighbor ! "gossip"
+      }
+      else{
+        println("Final Count: "+ gossipsCount + "ID: " + identity(0))
       }
     }
-    
-    
-    
-    
+
+
+
+
   }
-  
+
 }
