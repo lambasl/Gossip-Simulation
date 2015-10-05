@@ -9,7 +9,7 @@ import common.Messages
 
 /* @author user
  */
-object Test extends App {
+object Application extends App {
   
   if(args.length != 3){
     println("Invalid arguments. Enter sbt \"run <numberofNodes> <topology[fullnetwork|line|grid|imperfectgrid]> <protocol[gossip|pushsum]>")

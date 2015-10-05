@@ -1,16 +1,35 @@
 package main
 
 import topologies.Topology
+import scala.util.Random
 
 /**
  * @author user
  */
 object Main {
-  def main(args: Array[String]): Unit = {
-    var numberOfNodes: Int = args(0).toInt
-    val topology: String = args(1).toString
-    val gossipOrPushsum: String = args(2).toString
-    Topology.initialiseTopology(numberOfNodes, topology, gossipOrPushsum)
-    Topology.randomNeighbor(Array.fill[Int](3)(0)) ! "gossip"
+
+  var count = 0;
+  var ratioFailedNodes = 0.20
+  val totalNumNodes = Topology.N
+  val numFailedNodes = (totalNumNodes * ratioFailedNodes).intValue()
+  val r = new Random()
+
+  def incrementCount(): Unit = {
+    count = count + 1
+  }
+
+  def stopRandomNode(identity: Array[Int]) = {
+    if (count < numFailedNodes) {
+      var randomNeighbor = Topology.randomNeighbor(identity)
+      /*while (randomNeighbor.isTerminated) {
+        randomNeighbor = Topology.randomNeighbor(identity)
+      }*/
+      if (!randomNeighbor.isTerminated) {
+        randomNeighbor ! "stop"
+      }
+      Thread.sleep(10)
+      //println(Topology.identityString(identity) + " stopped?" + randomNeighbor.isTerminated)
+      count += 1
+    }
   }
 }

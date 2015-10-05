@@ -3,7 +3,7 @@ name := """gossip"""
 version := "1.0"
 scalaVersion := "2.10.1"
 
-mainClass in (Compile, run) := Some("main.Test")
+mainClass in (Compile, run) := Some("main.Application")
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(

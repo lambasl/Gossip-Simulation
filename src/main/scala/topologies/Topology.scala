@@ -6,6 +6,9 @@ import scala.math
 import scala.util.Random
 import actors.GossipActor
 import actors.PushSumActor
+import actors.GossipActor
+import actors.GossipV2
+import actors.GossipActor
 
 /**
  * @SrinivasNarne @SatbeerLamba
